@@ -1,0 +1,183 @@
+<!-- dashboard/templates/dashboard/index.html -->
+<!-- Final version with Two-Column Professional Layout -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saralytics - AI Analytics Dashboard</title>
+
+    <style>
+        /* --- NEW TWO-COLUMN UI REVAMP STYLES --- */
+        
+        :root {
+            --primary-text: #2c3e50;
+            --secondary-text: #5a6d7f;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --accent-color: #007bff;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 40px;
+            color: var(--primary-text);
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--primary-text);
+            margin-bottom: 50px;
+        }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        /* --- CORE TWO-COLUMN LAYOUT --- */
+        .main-container {
+            display: flex;
+            flex-direction: row; /* Default for large screens */
+            gap: 30px;
+            max-width: 1800px;
+            margin: auto;
+        }
+        .charts-column {
+            flex: 6; /* Takes up 6 parts of the space */
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .agent-column {
+            flex: 4; /* Takes up 4 parts of the space */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Responsive behavior for smaller screens */
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column; /* Stack columns vertically on smaller screens */
+            }
+        }
+
+        /* --- Card Styling --- */
+        .chart-card {
+            background-color: var(--card-background);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+        .agent-card {
+            /* Agent card should fill the entire height of its column */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* --- AI Chat Interface Styling --- */
+        #chat-history {
+            flex-grow: 1; /* This makes the chat history fill the available space */
+            border: 1px solid var(--border-color);
+            background-color: #fdfdff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+        /* (Message bubble styles are the same as before) */
+        .chat-message { padding: 12px 18px; border-radius: 20px; max-width: 90%; line-height: 1.6; font-size: 0.95rem; }
+        .user-message { background-color: var(--accent-color); color: white; align-self: flex-end; border-bottom-right-radius: 5px; }
+        .agent-message { background-color: #e9ecef; color: var(--primary-text); align-self: flex-start; border-bottom-left-radius: 5px; width: 100%; box-sizing: border-box; }
+        .agent-message strong { display: block; margin-bottom: 8px; color: var(--primary-text); font-weight: 600; }
+        
+        /* --- AI Form Styling (with Clear Button) --- */
+        .form-container { display: flex; gap: 10px; align-items: center; }
+        #ai-form { flex-grow: 1; display: flex; }
+        #ai-question { flex-grow: 1; padding: 14px 18px; border: 1px solid #ccc; border-radius: 10px 0 0 10px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
+        #ai-question:focus { border-color: var(--accent-color); }
+        #ai-form button { padding: 14px 25px; border: none; background-color: var(--primary-text); color: white; border-radius: 0 10px 10px 0; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.2s; }
+        #ai-form button:hover { background-color: #4a657f; }
+        #ai-form button:disabled { background-color: #99a9b9; cursor: not-allowed; }
+        #clear-history-btn { padding: 10px 15px; border: 1px solid var(--border-color); background-color: var(--card-background); color: var(--secondary-text); border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+        #clear-history-btn:hover { background-color: #e9ecef; border-color: #adb5bd; }
+        
+        /* --- Styling for the AI's Formatted HTML Response --- */
+        .agent-message table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
+        .agent-message th, .agent-message td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .agent-message th { background-color: #dee2e6; font-weight: 600; }
+    </style>
+
+    <!-- JS LIBRARIES (Unchanged) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+    <h1>Saralytics AI Dashboard</h1>
+
+    <!-- THE NEW TWO-COLUMN MAIN CONTAINER -->
+    <div class="main-container">
+        
+        <!-- COLUMN 1: CHARTS -->
+        <div class="charts-column">
+            <!-- Chart 1 & 2 in a nested grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="chart-card">
+                    <h2>Monthly Sales Revenue</h2>
+                    <canvas id="monthlySalesChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h2>Top Sales by Item</h2>
+                    <canvas id="itemSalesChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Chart 3 below the first two -->
+            <div class="chart-card">
+                <h2>Top Quantity Sold by Tyre Size</h2>
+                <canvas id="sizeQuantityChart"></canvas>
+            </div>
+        </div>
+
+        <!-- COLUMN 2: AI AGENT -->
+        <div class="agent-column">
+            <div class="chart-card agent-card">
+                <h2>Talk to an AI Agent</h2>
+                <div id="chat-history">
+                    <div class="chat-message agent-message">
+                        <strong>Saralytics Agent Says:</strong>
+                        <div class="content">Welcome! Ask me a question about your business data.</div>
+                    </div>
+                </div>
+                <div class="form-container">
+                    <form id="ai-form">
+                        {% csrf_token %}
+                        <input type="text" id="ai-question" placeholder="Ask Saralytics a question..." required>
+                        <button type="submit">Ask Agent</button>
+                    </form>
+                    <button id="clear-history-btn" title="Clear chat history">Clear</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- YOUR CUSTOM JAVASCRIPT (Unchanged) -->
+    <script src="{% static 'dashboard/js/main.js' %}"></script>
+
+</body>
+</html>
