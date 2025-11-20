@@ -2,7 +2,7 @@
 
 **Submission for the Kaggle 5-Day AI Agents Intensive Course Capstone Project**
 
-**Video Demo:** [https://www.youtube.com/your-video-link-here](https://www.youtube.com/your-video-link-here)
+**Video Demo:** [https://youtu.be/YfaQO-yYJSU](https://youtu.be/YfaQO-yYJSU)
 
 ---
 
