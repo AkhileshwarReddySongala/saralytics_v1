@@ -6,87 +6,109 @@
 
 ---
 
-## 1. Introduction
+## 1. Inspiration: The Story Behind Saralytics
+**"Real Data, Real Business, Real Solutions."**
 
-### The Problem: The Data-Insight Gap
-In today's data-rich world, businesses, especially in sectors like retail and distribution, collect vast amounts of transactional data. However, this data often remains locked away in legacy databases, inaccessible to the non-technical decision-makers who need it most. Getting specific, role-relevant insights—like a sales manager tracking team performance or a finance analyst investigating product profitability—is a slow and inefficient process, requiring data analysts to act as manual intermediaries for every query. This "data-insight gap" delays critical business decisions and hinders agility.
+This project was born out of a specific, real-world need. My father operates a chain of tyre showrooms across India. Like many established businesses in the retail and distribution sector, his daily operations rely on a legacy ERP system backed by a Microsoft Access database.
 
-### The Solution: A Team of Specialized AI Agents
-Saralytics is a web-based business analytics dashboard that bridges this gap. It provides a real-time, interactive view of a company's sales and inventory data. Its core innovation lies in its **hierarchical multi-agent system**, a team of specialized AI agents designed to mimic a real-world analytics department:
+I often watched him struggle to extract fast, specific insights from this massive amount of data. Simple questions like *"Which tyre brand gave us the highest margin last month?"* or *"Do we have enough stock of this specific MRF tyre size across all branches?"* required time-consuming manual lookups or requests to data entry staff.
 
-*   **Mandy (The Manager Agent):** A top-level orchestrator powered by **Google's Gemini model**. Mandy's sole job is to receive the user's request and intelligently delegate it to the correct specialist.
-*   **Sam (The Sales Agent):** A specialist focused on revenue, sales trends, and top-selling products.
-*   **Ivy (The Inventory Agent):** A specialist focused on stock movement, unit counts, and product specifications.
-*   **Finn (The Finance Agent):** A specialist in profitability, equipped with a **custom tool** to perform precise profit margin calculations directly from the database.
+**Saralytics** was built to solve this problem for him. It allows him to "chat" with his ERP system. It bridges the gap between legacy infrastructure (`.mdb` files) and modern AI capabilities, proving that AI agents can modernize even traditional family businesses.
 
-Users interact with Saralytics through a single, conversational chat interface. The system feels like talking to one unified AI, but behind the scenes, Mandy ensures the right expert is always on the job.
-
-### The Value: Democratizing Data, Accelerating Decisions
-Saralytics democratizes data analysis. It transforms the process from a slow, ticket-based system into an interactive, instantaneous conversation.
-
-*   **For Stakeholders:** Empowers non-technical users to perform complex data queries on their own, reducing time-to-insight from days to seconds.
-*   **For Data Analysts:** Frees up valuable data analyst time from routine queries, allowing them to focus on more strategic, deep-dive analyses.
-*   **For the Business:** Fosters a data-driven culture by making insights accessible to everyone, leading to faster, more informed, and more profitable business decisions.
+![Saralytics Dashboard Interface](dashboard.png)
+*(The Saralytics Chat Interface interfacing with live ERP data)*
 
 ---
 
-## 2. Implementation
+## 2. The Problem: The Data-Insight Gap
+In today's data-rich world, businesses collect vast amounts of transactional data. However, for many SMEs (Small and Medium Enterprises), this data remains locked away in complex database tables, accessible only to technical staff.
 
-### Architecture
-Saralytics is built on a modern, full-stack architecture designed for robust performance and modularity. The agentic system is hierarchical, with a manager agent routing tasks to a team of subordinate specialist agents.
+Getting specific, role-relevant insights is a slow process. This "data-insight gap" forces decision-makers to rely on intuition rather than hard facts, simply because getting the facts takes too long.
 
-*   **Frontend:** Built with vanilla **HTML, CSS, and JavaScript**. It uses **Chart.js** for interactive data visualizations and **Marked.js** to render the AI's markdown responses into clean HTML. The frontend communicates with the backend via asynchronous API calls, including a streaming connection for real-time AI responses.
-*   **Backend:** A powerful **Django** application serves as the core of the project. It handles API routing, database connections, and orchestrates the multi-agent system.
-*   **Database:** Connects directly to a legacy **Microsoft Access Database (`.MDB`)** using `pyodbc` and `pandas`, demonstrating the ability to integrate with existing enterprise systems.
-*   **AI Models:** A hybrid model approach is used:
-    *   The **Manager Agent (Mandy)** is powered by **Google's Gemini Pro** for fast and accurate task routing.
-    *   The **Specialist Agents (Sam, Ivy, Finn)** are powered by a larger, locally-hosted model (`gpt-oss:120b-cloud` via **Ollama**) for deep, analytical reasoning.
-*   **Multi-Agent System:** The core logic resides in two chained Django views that create the agent hierarchy. The `manager_agent_api` receives the user request and uses Gemini to choose an agent. It then simulates a new request to the `specialist_agent_api`, which executes the full "reason-act" loop for the chosen specialist.
+---
+
+## 3. The Solution: A Team of Specialized AI Agents
+Saralytics is a web-based business analytics dashboard. Its core innovation is a **hierarchical multi-agent system** designed to mimic a real-world analytics department. Users interact with a single chat interface, but behind the scenes, a team of agents works together:
+
+### The Agent Hierarchy
+1.  **Mandy (The Manager):**
+    *   **Role:** Top-level Orchestrator.
+    *   **Engine:** **Google Gemini Pro**.
+    *   **Function:** Mandy analyzes the user's intent and routes the task to the correct specialist. She ensures the user talks to the right expert for the job.
+
+2.  **Sam (The Sales Agent):**
+    *   **Role:** Revenue & Trends Specialist.
+    *   **Focus:** Top-selling products, revenue per branch, and sales timestamps.
+
+3.  **Ivy (The Inventory Agent):**
+    *   **Role:** Stock & Product Specialist.
+    *   **Focus:** Stock levels, unit counts, product categories, and low-stock alerts.
+
+4.  **Finn (The Finance Agent):**
+    *   **Role:** Profitability Specialist.
+    *   **Tools:** Equipped with a custom Python tool to calculate precise profit margins from the legacy database.
+
+---
+
+## 4. Implementation & Architecture
+
+### Tech Stack
+*   **Frontend:** Vanilla HTML/CSS/JS with **Chart.js** for visualization and **Marked.js** for markdown rendering.
+*   **Backend:** Django (Python).
+*   **Database:** Legacy **Microsoft Access Database (`.MDB`)** connected via `pyodbc`.
+*   **AI Models:** Hybrid approach using **Google Gemini** (Cloud) for routing and **Ollama** (Local LLM) for specialist reasoning.
 
 ![Saralytics Architecture Diagram](architecture.png)
 
-### Technical Features Showcase
-This project successfully implements **five (5)** of the key concepts from the course:
+### Key Features (Course Checklist)
+This project successfully implements **5 of the key concepts** from the AI Agents Intensive course:
 
-1.  ✅ **Multi-agent system:** The hierarchical system with a Gemini-powered Manager delegating to parallel specialist agents is a core feature. Each specialist has a unique persona and sandboxed data access, ensuring their responses are expert and relevant.
-
-2.  ✅ **Agent powered by an LLM:** The project demonstrates a sophisticated hybrid approach, using **Gemini** for fast classification/routing and a larger **Ollama-hosted model** for in-depth analysis.
-
-3.  ✅ **Custom Tools:** The Finance Agent, Finn, has access to a custom-built Python tool, `get_profit_analysis_for_item()`. The agent demonstrates a full "reason-act" loop: it reasons that a tool is needed, formulates a JSON call, the backend executes the tool against the database, and the result is fed back to the agent for final synthesis.
-
-4.  ✅ **Sessions & Memory:** The chat interface maintains a session history. The conversation history is sent back to the agent with each new question, providing crucial context. This allows for natural, multi-turn conversations where the user can ask follow-up questions, and the agent "remembers" the subject of the previous turn.
-
-5.  ✅ **Observability (Logging/Tracing):** The entire agentic workflow, from the manager's decision to the specialist's tool use, is printed to the Django console with clear labels. This provides a detailed trace of the system's "thoughts" and actions, which is invaluable for debugging and understanding agent behavior.
-
-### Setup and Installation
-1.  **Clone the repository:** `git clone https://github.com/AkhileshwarReddySongala/saralytics.git`
-2.  **Prerequisites:**
-    *   Python 3.11+
-    *   Windows Operating System
-    *   Microsoft Access Database Engine 2016 Redistributable (ensure it matches your Python's bitness - 64-bit is common).
-    *   Ollama installed and running locally.
-3.  **Setup Virtual Environment:**
-    ```bash
-    cd your-repo-name
-    python -m venv venv
-    .\venv\Scripts\activate
-    ```
-4.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-5.  **Configure API Key:**
-    *   Create a file named `.env` in the root of the project.
-    *   Add your Google AI Studio API key to it: `GEMINI_API_KEY="YOUR_API_KEY_HERE"`
-6.  **Database:** Place your Microsoft Access database file (e.g., `MRF.MDB`) in the root of the project directory. If your filename or table names are different, update them in `dashboard/views.py`. *(Note: The database file is not included in this repository for data privacy reasons.)*
-7.  **Run the Django Server:**
-    ```bash
-    python manage.py runserver
-    ```
-8.  Access the application at `http://127.0.0.1:8000/`.
+1.  ✅ **Multi-agent system:** A hierarchical architecture where a Manager agent delegates tasks to isolated Specialist agents based on domain expertise.
+2.  ✅ **Agent powered by an LLM:** Utilization of **Google Gemini Pro** for high-intelligence routing and local LLMs for specialized tasks.
+3.  ✅ **Custom Tools:** The Finance Agent (Finn) utilizes a custom Python function, `get_profit_analysis_for_item()`, demonstrating a full **Reason → Act → Observe** loop to query the database programmatically.
+4.  ✅ **Sessions & Memory:** The chat system maintains session history. Context is passed back to the agents, allowing for multi-turn conversations (e.g., "How many did we sell?" followed by "And what was the profit on that?").
+5.  ✅ **Observability:** The system implements detailed server-side logging (tracing), printing the Manager's routing logic and the Specialist's tool usage steps to the console for debugging and transparency.
 
 ---
 
-## 3. Bonus Points
+## 5. Setup and Installation
 
-*   **Effective Use of Gemini (5 points):** The project strategically uses the Gemini Pro model to power the high-level Manager Agent ("Mandy"), handling the critical task of routing user intent to the correct specialist. This demonstrates a practical and efficient use of the model for classification tasks within a larger agentic system.
+**Note:** This project requires a Windows environment to natively support the Microsoft Access Database Engine.
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/AkhileshwarReddySongala/saralytics.git
+    ```
+
+2.  **Prerequisites:**
+    *   Python 3.11+
+    *   **Microsoft Access Database Engine 2016 Redistributable** (Ensure bitness matches your Python installation).
+    *   **Ollama** installed and running locally.
+
+3.  **Environment Setup:**
+    ```bash
+    cd saralytics
+    python -m venv venv
+    .\venv\Scripts\activate
+    pip install -r requirements.txt
+    ```
+
+4.  **API Configuration:**
+    *   Create a `.env` file in the root directory.
+    *   Add your Gemini API Key: `GEMINI_API_KEY="YOUR_KEY_HERE"`
+
+5.  **Database Setup:**
+    *   *Privacy Note:* The real ERP database contains sensitive family business data.
+    *   To run this, place a sample Microsoft Access file named `MRF.MDB` in the project root, or update the `DB_PATH` in `views.py` to point to your own `.mdb` file.
+
+6.  **Run the Server:**
+    ```bash
+    python manage.py runserver
+    ```
+
+---
+
+## 6. Bonus: Effective Use of Gemini
+I utilized **Google Gemini Pro** specifically for the **Manager Agent (Mandy)** because of its superior reasoning and instruction-following capabilities regarding intent classification.
+
+In a multi-agent system, the router is the single point of failure; if the router fails, the wrong specialist answers, and the answer is wrong. Gemini proved to be faster and more accurate than smaller local models at discerning the subtle differences between a "Sales" query and a "Finance" query, ensuring the system remains robust.
