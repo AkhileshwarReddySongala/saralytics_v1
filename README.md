@@ -1,5 +1,7 @@
 # Saralytics: The AI-Powered Business Analytics Dashboard
 
+![Logo](Logo%20(2).png)
+
 **Submission for the Kaggle 5-Day AI Agents Intensive Course Capstone Project**
 
 **Video Demo:** [https://youtu.be/YfaQO-yYJSU](https://youtu.be/YfaQO-yYJSU)
