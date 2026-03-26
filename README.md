@@ -2,7 +2,6 @@
 
 ![Logo](Logo%20(2).png)
 
-**Submission for the Kaggle 5-Day AI Agents Intensive Course Capstone Project**
 
 **Video Demo:** [https://youtu.be/YfaQO-yYJSU](https://youtu.be/YfaQO-yYJSU)
 
@@ -110,7 +109,7 @@ This project successfully implements **5 of the key concepts** from the AI Agent
 
 ---
 
-## 6. Bonus: Effective Use of Gemini
+## 6. Effective Use of Gemini
 I utilized **Google Gemini Pro** specifically for the **Manager Agent (Mandy)** because of its superior reasoning and instruction-following capabilities regarding intent classification.
 
 In a multi-agent system, the router is the single point of failure; if the router fails, the wrong specialist answers, and the answer is wrong. Gemini proved to be faster and more accurate than smaller local models at discerning the subtle differences between a "Sales" query and a "Finance" query, ensuring the system remains robust.
